@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Semi-Marathon — Objectif 1h45</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 32px 24px;
+    max-width: 800px;
+    margin: 0 auto;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e5e5;
+  }
+  header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
+  header .subtitle { font-size: 14px; color: #666; margin-top: 6px; }
+  header .target {
+    display: inline-block;
+    margin-top: 12px;
+    background: #8E24AA;
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .paces {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .pace-box {
+    text-align: center;
+    padding: 10px 6px;
+    border-radius: 8px;
+    border: 1.5px solid;
+  }
+  .pace-box .label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .pace-box .value { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .pace-box .pct { font-size: 10px; color: #888; margin-top: 1px; }
+
+  .phase-header {
+    margin-top: 32px;
+    margin-bottom: 4px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    page-break-after: avoid;
+  }
+
+  .week {
+    margin-bottom: 20px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 10px;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+  }
+  .week-header h3 { font-size: 14px; font-weight: 700; }
+  .week-header .dates { font-size: 12px; color: #888; }
+  .week-header .badge {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .session {
+    display: grid;
+    grid-template-columns: 90px 1fr auto;
+    gap: 10px;
+    align-items: start;
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .session:last-child { border-bottom: none; }
+
+  .session .day {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    padding-top: 1px;
+  }
+  .session .content .title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .session .content .detail { font-size: 12px; color: #555; line-height: 1.4; }
+  .session .pace-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+  /* Session type colors */
+  .session.easy .title { color: #43A047; }
+  .session.easy .pace-tag { background: #E8F5E9; color: #2E7D32; }
+  .session.long .title { color: #1E88E5; }
+  .session.long .pace-tag { background: #E3F2FD; color: #1565C0; }
+  .session.vma .title { color: #E64A19; }
+  .session.vma .pace-tag { background: #FBE9E7; color: #BF360C; }
+  .session.seuil .title { color: #F57C00; }
+  .session.seuil .pace-tag { background: #FFF3E0; color: #E65100; }
+  .session.race .title { color: #8E24AA; }
+  .session.race .pace-tag { background: #F3E5F5; color: #6A1B9A; }
+  .session.race { background: #F3E5F5; }
+
+  .race-strategy {
+    margin-top: 32px;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 10px;
+    border: 1.5px solid #e5e5e5;
+    page-break-inside: avoid;
+  }
+  .race-strategy h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .race-strategy .segment {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .race-strategy .km { font-size: 13px; font-weight: 700; color: #8E24AA; }
+  .race-strategy .instruction { font-size: 13px; color: #444; line-height: 1.4; }
+
+  .tips {
+    margin-top: 20px;
+    padding: 20px;
+    background: #E3F2FD;
+    border-radius: 10px;
+    page-break-inside: avoid;
+  }
+  .tips h2 { font-size: 16px; font-weight: 700; margin-bottom: 10px; color: #1565C0; }
+  .tips p { font-size: 13px; color: #333; line-height: 1.5; margin-bottom: 8px; }
+  .tips p:last-child { margin-bottom: 0; }
+  .tips strong { color: #1565C0; }
+
+  @media print {
+    body { padding: 16px; }
+    .phase-header { page-break-before: auto; }
+    .week { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏃 Plan Semi-Marathon</h1>
+  <div class="subtitle">12 semaines · 3 séances/semaine · VMA 16 km/h</div>
+  <div class="target">Objectif : 1h45 — 5:00/km</div>
+</header>
+
+<!-- Allures de référence -->
+<div class="paces">
+  <div class="pace-box" style="background:#E8F5E9; border-color:#66BB6A;">
+    <div class="label" style="color:#43A047;">Endurance (EF)</div>
+    <div class="value" style="color:#2E7D32;">5:30–6:15</div>
+    <div class="pct">65–70% VMA</div>
+  </div>
+  <div class="pace-box" style="background:#FFF3E0; border-color:#FFA726;">
+    <div class="label" style="color:#F57C00;">Seuil / AS21</div>
+    <div class="value" style="color:#E65100;">4:25–5:00</div>
+    <div class="pct">75–85% VMA</div>
+  </div>
+  <div class="pace-box" style="background:#FBE9E7; border-color:#FF7043;">
+    <div class="label" style="color:#E64A19;">VMA</div>
+    <div class="value" style="color:#BF360C;">3:45–3:55</div>
+    <div class="pct">95–100% VMA</div>
+  </div>
+  <div class="pace-box" style="background:#F3E5F5; border-color:#AB47BC;">
+    <div class="label" style="color:#8E24AA;">Course</div>
+    <div class="value" style="color:#6A1B9A;">5:00/km</div>
+    <div class="pct">= 1h45</div>
+  </div>
+</div>
+
+<!-- ═══════════ PHASE 1 ═══════════ -->
+<div class="phase-header" style="background:#1E88E5;">Phase 1 — Construction (semaines 1 à 4)</div>
+
+<!-- Semaine 1 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 1 <span class="dates">· 25 – 29 août</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 25/08</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">45 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session vma">
+    <div class="day">Jeu 27/08</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#E64A19;"></span>8 × 200m VMA</div>
+      <div class="detail">Récup 200m trot. Échauffement 20 min + retour au calme 10 min</div>
+    </div>
+    <div class="pace-tag">3:45–3:55/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 29/08</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue EF</div>
+      <div class="detail">1h10 en endurance fondamentale (~12 km)</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+</div>
+
+<!-- Semaine 2 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 2 <span class="dates">· 1 – 5 sept.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 01/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">50 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session vma">
+    <div class="day">Jeu 03/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#E64A19;"></span>6 × 400m VMA</div>
+      <div class="detail">Récup 1'15 trot entre chaque</div>
+    </div>
+    <div class="pace-tag">3:45–3:55/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 05/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue EF</div>
+      <div class="detail">1h15 en endurance fondamentale (~13 km)</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+</div>
+
+<!-- Semaine 3 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 3 <span class="dates">· 8 – 12 sept.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 08/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">50 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session vma">
+    <div class="day">Jeu 10/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#E64A19;"></span>10 × 200m VMA</div>
+      <div class="detail">Récup 200m trot entre chaque</div>
+    </div>
+    <div class="pace-tag">3:45–3:55/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 12/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue EF + AS21</div>
+      <div class="detail">1h20 (~14 km) dont 15 min à allure semi en fin de sortie</div>
+    </div>
+    <div class="pace-tag">EF puis 5:00/km</div>
+  </div>
+</div>
+
+<!-- Semaine 4 — Récup -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 4 <span class="dates">· 15 – 19 sept.</span></h3>
+    <span class="badge" style="background:#E3F2FD; color:#1565C0;">💤 Récupération</span>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 15/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF souple</div>
+      <div class="detail">40 min très relâché — semaine allégée</div>
+    </div>
+    <div class="pace-tag">6:00–6:15/km</div>
+  </div>
+  <div class="session vma">
+    <div class="day">Jeu 17/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#E64A19;"></span>5 × 400m VMA</div>
+      <div class="detail">Récup 1'30 trot — volume réduit</div>
+    </div>
+    <div class="pace-tag">3:45–3:55/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 19/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue EF tranquille</div>
+      <div class="detail">1h10 (~12 km) — on récupère</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+</div>
+
+<!-- ═══════════ PHASE 2 ═══════════ -->
+<div class="phase-header" style="background:#F57C00;">Phase 2 — Développement spécifique (semaines 5 à 8)</div>
+
+<!-- Semaine 5 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 5 <span class="dates">· 22 – 26 sept.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 22/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">50 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session seuil">
+    <div class="day">Jeu 24/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#F57C00;"></span>3 × 2000m seuil</div>
+      <div class="detail">Récup 2 min trot entre chaque</div>
+    </div>
+    <div class="pace-tag">4:25–4:40/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 26/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue + 2×10 min AS21</div>
+      <div class="detail">1h30 (~16 km). 2 blocs de 10 min à allure semi, récup 5 min EF</div>
+    </div>
+    <div class="pace-tag">EF + 5:00/km</div>
+  </div>
+</div>
+
+<!-- Semaine 6 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 6 <span class="dates">· 29 sept. – 3 oct.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 29/09</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">50 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session vma">
+    <div class="day">Jeu 01/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#E64A19;"></span>5 × 1000m VMA</div>
+      <div class="detail">Récup 2 min trot entre chaque</div>
+    </div>
+    <div class="pace-tag">3:45–3:55/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 03/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue + 3×8 min AS21</div>
+      <div class="detail">1h35 (~17 km). 3 blocs de 8 min à allure semi, récup 4 min EF</div>
+    </div>
+    <div class="pace-tag">EF + 5:00/km</div>
+  </div>
+</div>
+
+<!-- Semaine 7 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 7 <span class="dates">· 6 – 10 oct.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 06/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">50 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session seuil">
+    <div class="day">Jeu 08/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#F57C00;"></span>2 × 3000m seuil</div>
+      <div class="detail">Récup 2'30 trot entre chaque</div>
+    </div>
+    <div class="pace-tag">4:25–4:40/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 10/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue + 20 min AS21</div>
+      <div class="detail">1h40 (~18 km). 20 min continues à allure semi</div>
+    </div>
+    <div class="pace-tag">EF + 5:00/km</div>
+  </div>
+</div>
+
+<!-- Semaine 8 — Récup -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 8 <span class="dates">· 13 – 17 oct.</span></h3>
+    <span class="badge" style="background:#FFF3E0; color:#E65100;">💤 Récupération</span>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 13/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF souple</div>
+      <div class="detail">40 min très relâché — semaine allégée</div>
+    </div>
+    <div class="pace-tag">6:00–6:15/km</div>
+  </div>
+  <div class="session seuil">
+    <div class="day">Jeu 15/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#F57C00;"></span>3 × 1000m seuil</div>
+      <div class="detail">Récup 2 min trot — volume réduit</div>
+    </div>
+    <div class="pace-tag">4:25–4:40/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 17/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue EF tranquille</div>
+      <div class="detail">1h15 (~13 km) — on récupère</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+</div>
+
+<!-- ═══════════ PHASE 3 ═══════════ -->
+<div class="phase-header" style="background:#43A047;">Phase 3 — Affûtage (semaines 9 à 11)</div>
+
+<!-- Semaine 9 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 9 <span class="dates">· 20 – 24 oct.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 20/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">50 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session vma">
+    <div class="day">Jeu 22/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#E64A19;"></span>4×1000m seuil + 4×400m VMA</div>
+      <div class="detail">Récup 1'30 / 1'15 trot. Séance mixte</div>
+    </div>
+    <div class="pace-tag">4:30 → 3:50/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 24/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue + 30 min AS21</div>
+      <div class="detail">1h40 (~18 km). 30 min continues à allure semi</div>
+    </div>
+    <div class="pace-tag">EF + 5:00/km</div>
+  </div>
+</div>
+
+<!-- Semaine 10 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 10 <span class="dates">· 27 – 31 oct.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 27/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">45 min en aisance respiratoire</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session seuil">
+    <div class="day">Jeu 29/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#F57C00;"></span>2 × 4000m à AS21</div>
+      <div class="detail">Récup 3 min trot. Simulation d'allure course</div>
+    </div>
+    <div class="pace-tag">5:00/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 31/10</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue + 2×15 min AS21</div>
+      <div class="detail">1h30 (~16 km). 2 blocs de 15 min à allure semi</div>
+    </div>
+    <div class="pace-tag">EF + 5:00/km</div>
+  </div>
+</div>
+
+<!-- Semaine 11 -->
+<div class="week">
+  <div class="week-header">
+    <h3>Semaine 11 <span class="dates">· 3 – 7 nov.</span></h3>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 03/11</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing EF</div>
+      <div class="detail">40 min relâché</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+  <div class="session seuil">
+    <div class="day">Jeu 05/11</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#F57C00;"></span>3 × 2000m à AS21</div>
+      <div class="detail">Récup 2 min trot. Dernière vraie séance de qualité</div>
+    </div>
+    <div class="pace-tag">5:00/km</div>
+  </div>
+  <div class="session long">
+    <div class="day">Sam 07/11</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#1E88E5;"></span>Sortie longue EF tranquille</div>
+      <div class="detail">1h (~11 km) — on baisse le volume</div>
+    </div>
+    <div class="pace-tag">5:30–6:15/km</div>
+  </div>
+</div>
+
+<!-- ═══════════ SEMAINE DE COURSE ═══════════ -->
+<div class="phase-header" style="background:#8E24AA;">Semaine 12 — Course (10 – 15 nov.)</div>
+
+<div class="week" style="border-color:#AB47BC;">
+  <div class="week-header" style="background:#F3E5F5;">
+    <h3>Semaine 12 <span class="dates">· 10 – 15 nov.</span></h3>
+    <span class="badge" style="background:#8E24AA; color:#fff;">🏁 Jour J</span>
+  </div>
+  <div class="session easy">
+    <div class="day">Mar 10/11</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Footing très souple</div>
+      <div class="detail">30 min à allure très confortable. Jambes fraîches</div>
+    </div>
+    <div class="pace-tag">6:00–6:30/km</div>
+  </div>
+  <div class="session easy">
+    <div class="day">Jeu 12/11</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#43A047;"></span>Déblocage léger</div>
+      <div class="detail">15 min EF + 4×200m à AS21 (récup 200m trot) + 10 min EF</div>
+    </div>
+    <div class="pace-tag">EF + 5:00/km</div>
+  </div>
+  <div class="session race">
+    <div class="day" style="color:#8E24AA; font-weight:700;">Dim 15/11</div>
+    <div class="content">
+      <div class="title"><span class="dot" style="background:#8E24AA;"></span>🏁 SEMI-MARATHON</div>
+      <div class="detail" style="font-weight:600;">Objectif 1h45 — Allure 5:00/km</div>
+    </div>
+    <div class="pace-tag" style="background:#8E24AA; color:#fff; font-weight:700;">1h45</div>
+  </div>
+</div>
+
+<!-- Stratégie de course -->
+<div class="race-strategy">
+  <h2>🎯 Stratégie de course</h2>
+  <div class="segment">
+    <div class="km">Km 1–5</div>
+    <div class="instruction">Partir à 5:05/km. Ne pas se laisser emporter par l'adrénaline du départ.</div>
+  </div>
+  <div class="segment">
+    <div class="km">Km 5–15</div>
+    <div class="instruction">Caler le rythme à 5:00/km pile. Rester relâché : épaules basses, mains détendues.</div>
+  </div>
+  <div class="segment">
+    <div class="km">Km 15–18</div>
+    <div class="instruction">Le moment dur. Maintenir 5:00/km en se fixant des objectifs courts (prochain km, prochain ravito).</div>
+  </div>
+  <div class="segment">
+    <div class="km">Km 18–21</div>
+    <div class="instruction">Si les jambes sont là, passer à 4:50–4:55/km pour assurer le chrono. Sinon, maintenir 5:00/km.</div>
+  </div>
+  <div class="segment">
+    <div class="km">Ravito</div>
+    <div class="instruction">Boire à chaque poste (petites gorgées). Gel ou fruits secs vers km 8 et km 15.</div>
+  </div>
+</div>
+
+<!-- Conseils -->
+<div class="tips">
+  <h2>💡 Conseils importants</h2>
+  <p><strong>Sortie longue</strong> — C'est la séance reine du plan. Mieux vaut zapper un fractionné qu'une sortie longue.</p>
+  <p><strong>Nutrition</strong> — Teste ta stratégie de ravitaillement (gels, boissons) pendant les sorties longues dès la phase 2. Rien de nouveau le jour J.</p>
+  <p><strong>Chaussures</strong> — Rôde tes chaussures de course dès maintenant. Pas de neuves le jour de la course.</p>
+  <p><strong>10 km test</strong> — Si possible, participe à un 10 km entre les semaines 6 et 9. Vise ~46–47 min pour confirmer le potentiel 1h45.</p>
+  <p><strong>Repos</strong> — Avec 3 séances/semaine, les jours off sont tes alliés. Dormir 7–8h est aussi important que l'entraînement.</p>
+</div>
+
+</body>
+</html>
